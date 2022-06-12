@@ -534,6 +534,7 @@ class UcodeTlvType(enum.IntEnum):
 
     # IWL_UCODE_TLV_CONST_BASE = 0x100
     FW_NUM_STATIONS = 0x100
+    UNKNOWN_101 = 0x101  # not defined in Linux driver, and found in linux-firmware files added on 2022-06-09
 
     UNKNOWN_444 = 0x444  # not defined in Linux driver, but found in Windows firmware files
 
