@@ -616,6 +616,7 @@ class MvmCommandGroups(enum.IntEnum):
     MAC_CONF = 0x3  # Medium Access Controller Configuration
     PHY_OPS = 0x4  # Physical Layer Operations
     DATA_PATH = 0x5
+    SCAN = 0x6
     NAN = 0x7  # Neighbor Awareness Networking
     LOCATION = 0x8  # Was TOF (Time of Flight)
     PROT_OFFLOAD = 0xB  # Protocol Offload
@@ -892,6 +893,17 @@ class DataPathSubcmdIds(enum.IntEnum):
 
 
 @enum.unique
+class ScanSubcmdIds(enum.IntEnum):
+    """enum iwl_scan_subcmd_ids"""
+
+    OFFLOAD_MATCH_INFO_NOTIF = 0xFC
+
+    @classmethod
+    def from_name(cls, name: str) -> "ScanSubcmdIds":
+        return getattr(cls, name)
+
+
+@enum.unique
 class NanSubcmdIds(enum.IntEnum):
     """enum iwl_nan_subcmd_ids (Neighbor Awareness Networking)"""
 
@@ -983,6 +995,7 @@ GROUP_CMD_ENUM: Mapping[int, Type[enum.IntEnum]] = {
     MvmCommandGroups.MAC_CONF.value: MacConfSubcmdIds,
     MvmCommandGroups.PHY_OPS.value: PhyOpsSubcmdIds,
     MvmCommandGroups.DATA_PATH.value: DataPathSubcmdIds,
+    MvmCommandGroups.SCAN.value: ScanSubcmdIds,
     MvmCommandGroups.NAN.value: NanSubcmdIds,
     MvmCommandGroups.LOCATION.value: LocationSubcmdIds,
     MvmCommandGroups.PROT_OFFLOAD.value: ProtOffloadSubcmdIds,
