@@ -531,6 +531,7 @@ class UcodeTlvType(enum.IntEnum):
     TCM_DEBUG_ADDRS = 65
     SEC_TABLE_ADDR = 66
     D3_KEK_KCK_ADDR = 67
+    UNKNOWN_68 = 68  # not defined in Linux driver, and found in linux-firmware files added on 2022-10-13
 
     # IWL_UCODE_TLV_CONST_BASE = 0x100
     FW_NUM_STATIONS = 0x100
