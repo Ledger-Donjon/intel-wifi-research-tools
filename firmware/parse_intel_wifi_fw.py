@@ -932,6 +932,9 @@ class LocationSubcmdIds(enum.IntEnum):
 class ProtOffloadSubcmdIds(enum.IntEnum):
     """enum iwl_prot_offload_subcmd_ids (Protocol Offload)"""
 
+    WOWLAN_WAKE_PKT_NOTIFICATION = 0xFC
+    WOWLAN_INFO_NOTIFICATION = 0xFD
+    D3_END_NOTIFICATION = 0xFE
     STORED_BEACON_NTF = 0xFF
 
     @classmethod
