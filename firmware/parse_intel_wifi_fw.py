@@ -536,6 +536,7 @@ class UcodeTlvType(enum.IntEnum):
     # IWL_UCODE_TLV_CONST_BASE = 0x100
     FW_NUM_STATIONS = 0x100
     UNKNOWN_101 = 0x101  # not defined in Linux driver, and found in linux-firmware files added on 2022-06-09
+    UNKNOWN_102 = 0x102  # not defined in Linux driver, and found in linux-firmware files added on 2022-11-08
 
     UNKNOWN_444 = 0x444  # not defined in Linux driver, but found in Windows firmware files
 
@@ -555,6 +556,7 @@ class UcodeTlvType(enum.IntEnum):
     TYPE_TRIGGERS = 0x1000009
     TYPE_CONF_SET = 0x100000A
     UNKNOWN_100000b = 0x100000B
+    UNKNOWN_100000c = 0x100000C  # not defined in Linux driver, and found in linux-firmware files added on 2022-11-08
 
     # TLVs 0x1000-0x2000 are for internal driver usage
     FW_DBG_DUMP_LST = 0x1000
