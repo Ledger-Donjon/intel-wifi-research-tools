@@ -263,6 +263,7 @@ class FwIniRegionType(enum.IntEnum):
     PCI_IOSF_CONFIG = 16
     SPECIAL_DEVICE_MEMORY = 17
     DBGI_SRAM = 18
+    UNKNOWN_REGTYPE_19 = 19  # Seen in iwlwifi-ty-a0-gf-a0-84.ucode__2023-09-21__81.8e5c544c.0 as "prph_mac_range"
 
 
 @enum.unique
@@ -2516,7 +2517,7 @@ class IntelWifiFirmware:
                 assert signature.unknown_0x20 == 0x40  # Public key length?
                 assert signature.unknown_0x24 == 1
                 # signature.unknown_0x28 is the file version
-                assert signature.unknown_0x2c == 0
+                assert signature.unknown_0x2c in {0, 1}
                 assert signature.unknown_0x30 in {0, 1, 2, 3, 4}  # Index in the file? Or kind?
             elif (
                 signature.header_size == 0x50
@@ -2537,7 +2538,7 @@ class IntelWifiFirmware:
                 assert signature.unknown_0x20 == 0xC
                 assert signature.unknown_0x24 == 0xC
                 assert signature.unknown_0x28 in {0, 0x100}
-                assert signature.unknown_0x2c == 0
+                assert signature.unknown_0x2c in {0, 1}
                 assert signature.unknown_0x30 in {0, 1, 2, 3, 4, 5}
                 # signature.unknown_0x34 is the file version
                 assert signature.unknown_0x38 in {0, 3}
