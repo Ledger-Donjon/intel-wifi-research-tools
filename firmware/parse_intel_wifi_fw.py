@@ -263,7 +263,9 @@ class FwIniRegionType(enum.IntEnum):
     PCI_IOSF_CONFIG = 16
     SPECIAL_DEVICE_MEMORY = 17
     DBGI_SRAM = 18
-    UNKNOWN_REGTYPE_19 = 19  # Seen in iwlwifi-ty-a0-gf-a0-84.ucode__2023-09-21__81.8e5c544c.0 as "prph_mac_range"
+    PERIPHERY_MAC_RANGE = 19  # Seen in iwlwifi-ty-a0-gf-a0-84.ucode__2023-09-21__81.8e5c544c.0 as "prph_mac_range"
+    PERIPHERY_PHY_RANGE = 20
+    PERIPHERY_SNPS_DPHYIP = 21
 
 
 @enum.unique
@@ -532,7 +534,8 @@ class UcodeTlvType(enum.IntEnum):
     TCM_DEBUG_ADDRS = 65
     SEC_TABLE_ADDR = 66
     D3_KEK_KCK_ADDR = 67
-    UNKNOWN_68 = 68  # not defined in Linux driver, and found in linux-firmware files added on 2022-10-13
+    TLV_CURRENT_PC = 68
+    UNKNOWN_69 = 69  # not defined in Linux driver, and found in linux-firmware files added on 2023-11-19
 
     # IWL_UCODE_TLV_CONST_BASE = 0x100
     FW_NUM_STATIONS = 0x100
@@ -2248,6 +2251,7 @@ class IntelWifiFirmware:
                         FwIniRegionType.DRAM_IMR,
                         FwIniRegionType.PCI_IOSF_CONFIG,
                         FwIniRegionType.DBGI_SRAM,
+                        FwIniRegionType.PERIPHERY_SNPS_DPHYIP,
                     }:
                         # struct iwl_fw_ini_region_dev_addr dev_addr
                         dev_addr = FwIniRegionDevAddr.parse(region.regconf_union)
