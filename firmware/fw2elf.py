@@ -313,7 +313,7 @@ def craft_elf(ucode_path: Path, output_prefix: Optional[Path]) -> None:
                 # Do not transmit signatures, which conflict with other segments
                 if size == 4 and addr in (0xAAAABBBB, 0xFFFFCCCC):
                     print(f"Skipping {addr:08x}..{addr + size:08x}: separator (Regular ucode)")
-                elif addr == 0 and size < 0x400:
+                elif addr == 0 and size < 0x900:
                     print(f"Skipping {addr:08x}..{addr + size:08x}: maybe signature (Regular ucode)")
                 else:
                     print(f"Loading {addr:08x}..{addr + size:08x}: {size:#x}={size} bytes of Regular ucode")
