@@ -95,6 +95,7 @@ class CfgMacType(enum.IntEnum):
     MA = 0x44
     BZ = 0x46
     GL = 0x47
+    SC = 0x48
 
     @classmethod
     def from_name(cls, name: str) -> "CfgMacType":
@@ -115,6 +116,7 @@ class CfgRfType(enum.IntEnum):
     MR = 0x110
     MS = 0x111
     FM = 0x112
+    WH = 0x113
 
     @classmethod
     def from_name(cls, name: str) -> "CfgRfType":
@@ -349,6 +351,7 @@ class UcodeTlvCapa(enum.IntEnum):
     LAR_MULTI_MCC = 29
     BT_COEX_RRC = 30
     GSCAN_SUPPORT = 31
+    FRAGMENTED_PNVM_IMG = 32
     NAN_SUPPORT = 34  # not defined in Linux driver, but found in https://github.com/OpenIntelWireless/itlwm/blob/v2.0.0/itlwm/hal_iwx/if_iwxreg.h  # noqa
     UMAC_UPLOAD = 35
     SOC_LATENCY_SUPPORT = 37
@@ -404,6 +407,16 @@ class UcodeTlvCapa(enum.IntEnum):
     # RFIM_SUPPORT = 102  # This value was updated in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9da090cdbcfa1ef864bfcbad9ad7e18691395867  # noqa
     DRAM_FRAG_SUPPORT = 104
     DUMP_COMPLETE_SUPPORT = 105
+    SYNCED_TIME = 106
+    TIME_SYNC_BOTH_FTM_TM = 108,
+    BIGTK_TX_SUPPORT = 109,
+    MLD_API_SUPPORT = 110,
+    SCAN_DONT_TOGGLE_ANT = 111,
+    PPAG_CHINA_BIOS_SUPPORT = 112
+    OFFLOAD_BTM_SUPPORT = 113
+    STA_EXP_MFP_SUPPORT = 114
+    SNIFF_VALIDATE_SUPPORT = 116
+    CHINA_22_REG_SUPPORT = 117
 
     @classmethod
     def from_name(cls, name: str) -> "UcodeTlvCapa":
@@ -413,6 +426,8 @@ class UcodeTlvCapa(enum.IntEnum):
         if name == "P2P_STANDALONE_UAPSD":
             # Renamed in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c5241b0c8c0bb2bfd69effaa81e30fa26a16adda
             return cls.P2P_SCM_UAPSD
+        if name == "OFFLOAD_REJ_BTM_SUPPORT":
+            return cls.OFFLOAD_BTM_SUPPORT
 
         return getattr(cls, name)
 
@@ -534,13 +549,13 @@ class UcodeTlvType(enum.IntEnum):
     TCM_DEBUG_ADDRS = 65
     SEC_TABLE_ADDR = 66
     D3_KEK_KCK_ADDR = 67
-    TLV_CURRENT_PC = 68
+    CURRENT_PC = 68
     UNKNOWN_69 = 69  # not defined in Linux driver, and found in linux-firmware files added on 2023-11-19
 
     # IWL_UCODE_TLV_CONST_BASE = 0x100
     FW_NUM_STATIONS = 0x100
     UNKNOWN_101 = 0x101  # not defined in Linux driver, and found in linux-firmware files added on 2022-06-09
-    UNKNOWN_102 = 0x102  # not defined in Linux driver, and found in linux-firmware files added on 2022-11-08
+    FW_NUM_BEACONS = 0x102
 
     UNKNOWN_444 = 0x444  # not defined in Linux driver, but found in Windows firmware files
 
@@ -628,6 +643,7 @@ class MvmCommandGroups(enum.IntEnum):
     PROT_OFFLOAD = 0xB  # Protocol Offload
     REGULATORY_AND_NVM = 0xC  # Non-Volatile Memory
     DEBUG = 0xF
+    STATISTICS = 0x10
 
     @classmethod
     def from_name(cls, name: str) -> "MvmCommandGroups":
@@ -698,8 +714,10 @@ class LegacyCmds(enum.IntEnum):
     TEMPERATURE_NOTIFICATION = 0x62
     CALIBRATION_CFG_CMD = 0x65
     CALIBRATION_RES_NOTIFICATION = 0x66
-    CALIBRATION_COMPLETE_NOTIFICATION = 0x67
-    RADIO_VERSION_NOTIFICATION = 0x68
+    # CALIBRATION_COMPLETE_NOTIFICATION = 0x67 Removed and replaced in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c7eca79def44f1faf024d8442044287bef749818
+    WNM_80211V_TIMING_MEASUREMENT_NOTIFICATION = 0x67
+    # RADIO_VERSION_NOTIFICATION = 0x68 Removed and replaced in https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c7eca79def44f1faf024d8442044287bef749818
+    WNM_80211V_TIMING_MEASUREMENT_CONFIRM_NOTIFICATION = 0x68
     PHY_CONFIGURATION_CMD = 0x6A
     CALIB_RES_NOTIF_PHY_DB = 0x6B
     PHY_DB_CMD = 0x6C
@@ -797,6 +815,11 @@ class LegacyCmds(enum.IntEnum):
         if name == "NET_DETECT_HOTSPOTS_QUERY_CMD":
             return cls.SCAN_OFFLOAD_HOTSPOTS_QUERY_CMD
 
+        if name == "CALIBRATION_COMPLETE_NOTIFICATION":
+            return cls.WNM_80211V_TIMING_MEASUREMENT_NOTIFICATION
+        if name == "RADIO_VERSION_NOTIFICATION":
+            return cls.WNM_80211V_TIMING_MEASUREMENT_CONFIRM_NOTIFICATION
+
         return getattr(cls, name)
 
 
@@ -811,6 +834,8 @@ class SystemSubcmdIds(enum.IntEnum):
     RFI_CONFIG_CMD = 0x0B
     RFI_GET_FREQ_TABLE_CMD = 0x0C
     SYSTEM_FEATURES_CONTROL_CMD = 0x0D
+    SYSTEM_STATISTICS_CMD = 0x0F
+    SYSTEM_STATISTICS_END_NOTIF = 0xFD
     RFI_DEACTIVATE_NOTIF = 0xFF
 
     @classmethod
@@ -831,6 +856,14 @@ class MacConfSubcmdIds(enum.IntEnum):
     CHANNEL_SWITCH_TIME_EVENT_CMD = 0x04
     SESSION_PROTECTION_CMD = 0x05
     CANCEL_CHANNEL_SWITCH_CMD = 0x06
+    MAC_CONFIG_CMD = 0x08
+    LINK_CONFIG_CMD = 0x09
+    STA_CONFIG_CMD = 0x0A
+    AUX_STA_CMD = 0x0B
+    STA_REMOVE_CMD = 0x0C
+    STA_DISABLE_TX_CMD = 0x0D
+    ROC_CMD = 0x0E
+    ROC_NOTIF = 0xF8
     CHANNEL_SWITCH_ERROR_NOTIF = 0xF9
     MISSED_VAP_NOTIF = 0xFA
     SESSION_PROTECTION_NOTIF = 0xFB
@@ -873,6 +906,8 @@ class DataPathSubcmdIds(enum.IntEnum):
     DQA_ENABLE_CMD = 0x00
     UPDATE_MU_GROUPS_CMD = 0x01
     TRIGGER_RX_QUEUES_NOTIF_CMD = 0x02
+    WNM_PLATFORM_PTM_REQUEST_CMD = 0x03
+    WNM_80211V_TIMING_MEASUREMENT_CONFIG_CMD = 0x04
     STA_HE_CTXT_CMD = 0x07
     RLC_CONFIG_CMD = 0x08
     RFH_QUEUE_CONFIG_CMD = 0x0D
@@ -971,6 +1006,7 @@ class RegulatoryAndNvmSubcmdIds(enum.IntEnum):
     NVM_GET_INFO = 0x02
     TAS_CONFIG = 0x03
     SAR_OFFSET_MAPPING_TABLE_CMD = 0x04
+    UATS_TABLE_CMD = 0x05
     PNVM_INIT_COMPLETE_NTFY = 0xFE
 
     @classmethod
@@ -985,13 +1021,27 @@ class DebugCmds(enum.IntEnum):
     LMAC_RD_WR = 0x00
     UMAC_RD_WR = 0x01
     HOST_EVENT_CFG = 0x03
+    INVALID_WR_PTR_CMD = 0x06
     DBGC_SUSPEND_RESUME = 0x07
     BUFFER_ALLOCATION = 0x08
+    GET_TAS_STATUS = 0x0A
     FW_DUMP_COMPLETE_CMD = 0x0B
     MFU_ASSERT_DUMP_NTF = 0xFE
 
     @classmethod
     def from_name(cls, name: str) -> "DebugCmds":
+        return getattr(cls, name)
+
+
+@enum.unique
+class StatisticsCmds(enum.IntEnum):
+    """enum iwl_statistics_subcmd_ids"""
+
+    STATISTICS_OPER_NOTIF = 0x00
+    STATISTICS_OPER_PART1_NOTIF = 0x01
+
+    @classmethod
+    def from_name(cls, name: str) -> "StatisticsCmds":
         return getattr(cls, name)
 
 
@@ -1008,6 +1058,7 @@ GROUP_CMD_ENUM: Mapping[int, Type[enum.IntEnum]] = {
     MvmCommandGroups.PROT_OFFLOAD.value: ProtOffloadSubcmdIds,
     MvmCommandGroups.REGULATORY_AND_NVM.value: RegulatoryAndNvmSubcmdIds,
     MvmCommandGroups.DEBUG.value: DebugCmds,
+    MvmCommandGroups.STATISTICS.value: StatisticsCmds,
 }
 
 
